@@ -864,6 +864,9 @@ namespace {
 #ifdef HORDE
     if (pos.is_horde()) {} else
 #endif
+#ifdef HELPMATE
+    if (pos.is_helpmate()) {} else
+#endif
     if (!rootNode && TB::Cardinality)
     {
         int piecesCount = pos.count<ALL_PIECES>();
@@ -957,6 +960,14 @@ namespace {
 #endif
 #ifdef LOSERS
     if (pos.is_losers() && pos.can_capture_losers())
+    {
+        improving =   ss->staticEval >= (ss-2)->staticEval
+                   || (ss-2)->staticEval == VALUE_NONE;
+        goto moves_loop;
+    }
+#endif
+#ifdef HELPMATE
+    if (pos.is_helpmate())
     {
         improving =   ss->staticEval >= (ss-2)->staticEval
                    || (ss-2)->staticEval == VALUE_NONE;
@@ -1534,6 +1545,10 @@ moves_loop: // When in check, search starts from here
 
     assert(bestValue > -VALUE_INFINITE && bestValue < VALUE_INFINITE);
 
+#ifdef HELPMATE
+    if (pos.is_helpmate())
+        return -bestValue;
+#endif
     return bestValue;
   }
 

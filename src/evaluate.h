@@ -55,6 +55,9 @@ constexpr Value Tempo[VARIANT_NB] = { // Must be visible to search
 #ifdef LOSERS
   Value(20),
 #endif
+#ifdef HELPMATE
+  Value(20),
+#endif
 #ifdef RACE
   Value(100),
 #endif
