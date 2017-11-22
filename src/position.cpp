@@ -517,6 +517,15 @@ void Position::set_check_info(StateInfo* si) const {
   }
   else
 #endif
+#ifdef ATOMIC
+  if (is_atomic() && kings_adjacent())
+  {
+      // If atomic kings are adjacent, only kings may block discovered checks
+      si->blockersForKing[WHITE] = slider_blockers(pieces(BLACK), square<KING>(WHITE), si->pinners[WHITE]) & pieces(KING);
+      si->blockersForKing[BLACK] = slider_blockers(pieces(WHITE), square<KING>(BLACK), si->pinners[BLACK]) & pieces(KING);
+  }
+  else
+#endif
 #ifdef EXTINCTION
   if (is_extinction())
   {

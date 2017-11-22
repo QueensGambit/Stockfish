@@ -119,6 +119,7 @@ public:
   // Checking
 #ifdef ATOMIC
   bool kings_adjacent() const;
+  bool kings_adjacent(Move m) const;
 #endif
   Bitboard checkers() const;
   Bitboard blockers_for_king(Color c) const;
@@ -543,6 +544,11 @@ inline Bitboard Position::slider_attackers_to(Square s) const {
 inline bool Position::kings_adjacent() const {
   return adjacent_squares_bb(byTypeBB[KING]) & byTypeBB[KING];
 }
+
+inline bool Position::kings_adjacent(Move m) const {
+  return type_of(moved_piece(m)) == KING ?
+      adjacent_squares_bb(to_sq(m)) & square<KING>(~sideToMove) : kings_adjacent();
+}
 #endif
 
 inline Bitboard Position::checkers() const {
@@ -554,6 +560,10 @@ inline Bitboard Position::blockers_for_king(Color c) const {
 }
 
 inline bool Position::gives_discovered_check(Move m) const {
+#ifdef ATOMIC
+  if (is_atomic() && kings_adjacent(m))
+      return false;
+#endif
 #ifdef CRAZYHOUSE
   if (is_house() && type_of(m) == DROP)
       return false;
