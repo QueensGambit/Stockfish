@@ -55,6 +55,19 @@ namespace {
         return moveList;
     }
 #endif
+#ifdef HELPMATE
+    if (V == HELPMATE_VARIANT)
+    {
+        if (Type == QUIETS || Type == CAPTURES || Type == NON_EVASIONS)
+        {
+            *moveList++ = make<PROMOTION>(to - D, to, QUEEN);
+            *moveList++ = make<PROMOTION>(to - D, to, ROOK);
+            *moveList++ = make<PROMOTION>(to - D, to, BISHOP);
+            *moveList++ = make<PROMOTION>(to - D, to, KNIGHT);
+        }
+        return moveList;
+    }
+#endif
     if (Type == CAPTURES || Type == EVASIONS || Type == NON_EVASIONS)
         *moveList++ = make<PROMOTION>(to - D, to, QUEEN);
 
@@ -517,6 +530,11 @@ ExtMove* generate(const Position& pos, ExtMove* moveList) {
                          : generate_all<GRID_VARIANT, BLACK, Type>(pos, moveList, target);
 #endif
 #ifdef HORDE
+  if (pos.is_helpmate())
+      return us == WHITE ? generate_all<HELPMATE_VARIANT, WHITE, Type>(pos, moveList, target)
+                         : generate_all<HELPMATE_VARIANT, BLACK, Type>(pos, moveList, target);
+#endif
+#ifdef HORDE
   if (pos.is_horde())
       return us == WHITE ? generate_all<HORDE_VARIANT, WHITE, Type>(pos, moveList, target)
                          : generate_all<HORDE_VARIANT, BLACK, Type>(pos, moveList, target);
@@ -642,6 +660,10 @@ template<>
 ExtMove* generate<EVASIONS>(const Position& pos, ExtMove* moveList) {
 #ifdef ANTI
   if (pos.is_anti())
+      return moveList;
+#endif
+#ifdef HELPMATE
+  if (pos.is_helpmate())
       return moveList;
 #endif
 #ifdef EXTINCTION

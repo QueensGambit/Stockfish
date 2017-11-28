@@ -900,6 +900,37 @@ Value Endgame<ANTI_VARIANT, NN>::operator()(const Position& pos) const {
 }
 #endif
 
+#ifdef HELPMATE
+template<>
+Value Endgame<HELPMATE_VARIANT, KXK>::operator()(const Position& pos) const {
+
+  assert(pos.variant() == HELPMATE_VARIANT);
+  assert(verify_material(pos, weakSide, VALUE_ZERO, 0));
+  assert(!pos.checkers()); // Eval is never called when in check
+
+  // Stalemate detection with lone king
+  if (pos.side_to_move() == weakSide && !MoveList<LEGAL>(pos).size())
+      return VALUE_DRAW;
+
+  Square winnerKSq = pos.square<KING>(strongSide);
+  Square loserKSq = pos.square<KING>(weakSide);
+
+  Value result =  pos.non_pawn_material(strongSide)
+                + pos.count<PAWN>(strongSide) * PawnValueEg
+                + PushToEdges[loserKSq]
+                + PushClose[distance(winnerKSq, loserKSq)];
+
+  if (   pos.count<QUEEN>(strongSide)
+      || pos.count<ROOK>(strongSide)
+      ||(pos.count<BISHOP>(strongSide) && pos.count<KNIGHT>(strongSide))
+      || (   (pos.pieces(strongSide, BISHOP) & ~DarkSquares)
+          && (pos.pieces(strongSide, BISHOP) &  DarkSquares)))
+      result = std::min(result + VALUE_KNOWN_WIN, VALUE_MATE_IN_MAX_PLY - 1);
+
+  return strongSide == (pos.is_antihelpmate() ? BLACK : WHITE) ? result : VALUE_DRAW;
+}
+#endif
+
 #ifdef ATOMIC
 template<>
 Value Endgame<ATOMIC_VARIANT, KXK>::operator()(const Position& pos) const {
