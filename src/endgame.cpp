@@ -905,29 +905,34 @@ template<>
 Value Endgame<HELPMATE_VARIANT, KXK>::operator()(const Position& pos) const {
 
   assert(pos.variant() == HELPMATE_VARIANT);
-  assert(verify_material(pos, weakSide, VALUE_ZERO, 0));
+  assert(strongSide == pos.is_antihelpmate() ? BLACK : WHITE);
   assert(!pos.checkers()); // Eval is never called when in check
 
-  // Stalemate detection with lone king
-  if (pos.side_to_move() == weakSide && !MoveList<LEGAL>(pos).size())
+  // Alias variables because helpmates have a winner and a loser
+  Color winnerSide = strongSide, loserSide = weakSide;
+
+  // Stalemate detection with lone king (and pawns)
+  if (pos.side_to_move() == loserSide && !pos.non_pawn_material(loserSide) && !MoveList<LEGAL>(pos).size())
       return VALUE_DRAW;
 
-  Square winnerKSq = pos.square<KING>(strongSide);
-  Square loserKSq = pos.square<KING>(weakSide);
+  Square winnerKSq = pos.square<KING>(winnerSide);
+  Square loserKSq = pos.square<KING>(loserSide);
 
-  Value result =  pos.non_pawn_material(strongSide)
-                + pos.count<PAWN>(strongSide) * PawnValueEg
-                + PushToEdges[loserKSq]
+  Value result =  pos.non_pawn_material()
+                + pos.count<PAWN>() * PawnValueEg
+                + (pos.non_pawn_material(winnerSide) >= RookValueMg ? PushToEdges[loserKSq] : PushToCorners[loserKSq])
                 + PushClose[distance(winnerKSq, loserKSq)];
 
-  if (   pos.count<QUEEN>(strongSide)
-      || pos.count<ROOK>(strongSide)
-      ||(pos.count<BISHOP>(strongSide) && pos.count<KNIGHT>(strongSide))
-      || (   (pos.pieces(strongSide, BISHOP) & ~DarkSquares)
-          && (pos.pieces(strongSide, BISHOP) &  DarkSquares)))
+  if (   pos.count<QUEEN>(winnerSide)
+      || pos.count<ROOK>(winnerSide)
+      || (    pos.count<BISHOP>(winnerSide)
+          && (pos.count<PAWN>(loserSide) || pos.count<KNIGHT>(loserSide)
+              || ((pos.pieces(BISHOP) & ~DarkSquares) && (pos.pieces(BISHOP) & DarkSquares))))
+      || (    pos.count<KNIGHT>(winnerSide)
+          && (pos.count<ALL_PIECES>() - pos.count<QUEEN>(loserSide) > 3)))
       result = std::min(result + VALUE_KNOWN_WIN, VALUE_MATE_IN_MAX_PLY - 1);
 
-  return strongSide == (pos.is_antihelpmate() ? BLACK : WHITE) ? result : VALUE_DRAW;
+  return winnerSide == pos.side_to_move() ? result : -result;
 }
 #endif
 

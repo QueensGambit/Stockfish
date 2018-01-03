@@ -378,6 +378,13 @@ namespace {
   }
 #endif
 
+#ifdef HELPMATE
+  bool is_KXK_helpmate(const Position& pos, Color us) {
+    return   more_than_one(pos.pieces(us))
+          && pos.non_pawn_material() >= RookValueMg;
+  }
+#endif
+
   bool is_KBPsK(const Position& pos, Color us) {
     return   pos.non_pawn_material(us) == BishopValueMg
           && pos.count<PAWN  >(us) >= 1;
@@ -515,12 +522,12 @@ Entry* probe(const Position& pos) {
 #ifdef HELPMATE
   else if (pos.is_helpmate())
   {
-      for (Color c = WHITE; c <= BLACK; ++c)
-          if (is_KXK(pos, c))
-          {
-              e->evaluationFunction = &EvaluateHelpmateKXK[c];
-              return e;
-          }
+      Color c = pos.is_antihelpmate() ? BLACK : WHITE;
+      if (is_KXK_helpmate(pos, c))
+      {
+          e->evaluationFunction = &EvaluateHelpmateKXK[c];
+          return e;
+      }
   }
 #endif
 
