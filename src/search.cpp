@@ -1006,6 +1006,9 @@ namespace {
 #ifdef EXTINCTION
     if (pos.is_extinction()) {} else
 #endif
+#ifdef HELPMATE
+    if (pos.is_helpmate()) {} else
+#endif
     if (   !PvNode
         &&  depth < 7 * ONE_PLY
         &&  eval - futility_margin(pos.variant(), depth, improving) >= beta
@@ -1723,6 +1726,9 @@ moves_loop: // When in check, search starts from here
 #endif
 #ifdef RACE
           && !(pos.is_race() && type_of(pos.piece_on(from_sq(move))) == KING && rank_of(to_sq(move)) == RANK_8)
+#endif
+#ifdef HELPMATE
+          && !pos.is_helpmate()
 #endif
           &&  futilityBase > -VALUE_KNOWN_WIN
           && !pos.advanced_pawn_push(move))

@@ -356,7 +356,7 @@ namespace {
 #ifdef ATOMIC
   Endgame<ATOMIC_VARIANT, KXK> EvaluateAtomicKXK[] = { Endgame<ATOMIC_VARIANT, KXK>(WHITE), Endgame<ATOMIC_VARIANT, KXK>(BLACK) };
 #endif
-#ifdef ATOMIC
+#ifdef HELPMATE
   Endgame<HELPMATE_VARIANT, KXK> EvaluateHelpmateKXK[] = { Endgame<HELPMATE_VARIANT, KXK>(WHITE), Endgame<HELPMATE_VARIANT, KXK>(BLACK) };
 #endif
 
