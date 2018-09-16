@@ -522,7 +522,11 @@ Entry* probe(const Position& pos) {
 #ifdef HELPMATE
   else if (pos.is_helpmate())
   {
+#ifdef ANTIHELPMATE
       Color c = pos.is_antihelpmate() ? BLACK : WHITE;
+#else
+      Color c = WHITE;
+#endif
       if (is_KXK_helpmate(pos, c))
       {
           e->evaluationFunction = &EvaluateHelpmateKXK[c];

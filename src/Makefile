@@ -304,6 +304,11 @@ ifeq (,$(filter -DTWOKINGS,$(CXXFLAGS)))
 $(error Twokings (-TWOKINGS) is required for subvariant twokingssymmetric)
 endif
 endif
+ifneq (,$(filter -DANTIHELPMATE,$(CXXFLAGS)))
+ifeq (,$(filter -DHELPMATE,$(CXXFLAGS)))
+$(error Helpmate (-HELPMATE) is required for subvariant antihelpmate)
+endif
+endif
 ifeq ($(debug),no)
 	CXXFLAGS += -DNDEBUG
 else

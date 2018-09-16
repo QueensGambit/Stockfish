@@ -905,7 +905,11 @@ template<>
 Value Endgame<HELPMATE_VARIANT, KXK>::operator()(const Position& pos) const {
 
   assert(pos.variant() == HELPMATE_VARIANT);
+#ifdef ANTIHELPMATE
   assert(strongSide == pos.is_antihelpmate() ? BLACK : WHITE);
+#else
+  assert(strongSide == WHITE);
+#endif
   assert(!pos.checkers()); // Eval is never called when in check
 
   // Alias variables because helpmates have a winner and a loser

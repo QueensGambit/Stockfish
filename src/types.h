@@ -151,7 +151,7 @@ enum Variant {
   VARIANT_NB,
   LAST_VARIANT = VARIANT_NB - 1,
   //subvariants
-#ifdef HELPMATE
+#ifdef ANTIHELPMATE
   ANTIHELPMATE_VARIANT,
 #endif
 #ifdef SUICIDE
@@ -762,8 +762,10 @@ inline Variant main_variant(Variant v) {
   switch(v)
   {
 #ifdef HELPMATE
+#ifdef ANTIHELPMATE
   case ANTIHELPMATE_VARIANT:
       return HELPMATE_VARIANT;
+#endif
 #endif
 #ifdef SUICIDE
   case SUICIDE_VARIANT:
