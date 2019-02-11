@@ -680,7 +680,7 @@ namespace {
     // enemy pawns are excluded from the mobility area.
 #ifdef ANTI
     if (pos.is_anti())
-        mobilityArea[Us] = ~0;
+        mobilityArea[Us] = AllSquares;
     else
 #endif
 #ifdef HORDE
@@ -1163,6 +1163,7 @@ namespace {
             score += ThreatsAnti[1] * popcount(attackedBy[Them][ALL_PIECES] & (unprotectedPawnPushes | unprotectedPieceMoves));
         }
         nonPawnEnemies = 0;
+        safe = 0;
         stronglyProtected = 0;
     }
     else
@@ -1170,11 +1171,13 @@ namespace {
 #ifdef ATOMIC
     if (pos.is_atomic())
     {
-        Bitboard attacks = pos.pieces(Them) & attackedBy[Us][ALL_PIECES] & ~attackedBy[Us][KING];
-        while (attacks)
+        // Opponent's pieces adjacent to our king are considered protected
+        stronglyProtected = DistanceRingBB[pos.square<KING>(Us)][1] | pos.square<KING>(Us);
+        b = pos.pieces(Them) & attackedBy[Us][ALL_PIECES] & ~stronglyProtected;
+        while (b)
         {
-            Square s = pop_lsb(&attacks);
-            Bitboard blast = (pos.attacks_from<KING>(s) & (pos.pieces() ^ pos.pieces(PAWN))) | s;
+            Square s = pop_lsb(&b);
+            Bitboard blast = (DistanceRingBB[s][1] & (pos.pieces() ^ pos.pieces(PAWN))) | s;
             int count = popcount(blast & pos.pieces(Them)) - popcount(blast & pos.pieces(Us)) - 1;
             if (blast & pos.pieces(Them, KING, QUEEN))
                 count++;
@@ -1182,8 +1185,8 @@ namespace {
                 count--;
             score += std::max(SCORE_ZERO, ThreatByBlast * count);
         }
+        safe = ~(adjacent_squares_bb(pos.pieces(Us, KING, QUEEN)) | pos.pieces(Us, KING, QUEEN));
         nonPawnEnemies = 0;
-        stronglyProtected = 0;
     }
     else
 #endif
@@ -1224,6 +1227,7 @@ namespace {
             score += ThreatsLosers[1] * popcount(attackedBy[Them][ALL_PIECES] & (unprotectedPawnPushes | unprotectedPieceMoves));
         }
         nonPawnEnemies = 0;
+        safe = 0;
         stronglyProtected = 0;
     }
     else
@@ -1286,7 +1290,18 @@ namespace {
     // Bonus for enemy unopposed weak pawns
     if (pos.pieces(Us, ROOK, QUEEN))
         score += WeakUnopposedPawn * pe->weak_unopposed(Them);
+    }
 
+#ifdef ANTI
+    if (pos.is_anti()) {} else
+#endif
+#ifdef GRID
+    if (pos.is_grid()) {} else
+#endif
+#ifdef LOSERS
+    if (pos.is_losers()) {} else
+#endif
+    {
     // Find squares where our pawns can push on the next move
     b  = shift<Up>(pos.pieces(Us, PAWN)) & ~pos.pieces();
     b |= shift<Up>(b & TRank3BB) & ~pos.pieces();
@@ -1303,8 +1318,39 @@ namespace {
 
     b = pawn_attacks_bb<Us>(b) & nonPawnEnemies;
     score += ThreatBySafePawn * popcount(b);
+    }
 
     // Bonus for threats on the next moves against enemy queen
+#ifdef ANTI
+    if (pos.is_anti()) {} else
+#endif
+#ifdef GRID
+    if (pos.is_grid()) {} else
+#endif
+#ifdef LOSERS
+    if (pos.is_losers()) {} else
+#endif
+#ifdef ATOMIC
+    if (pos.is_atomic())
+    {
+        nonPawnEnemies = adjacent_squares_bb(pos.pieces(Them, QUEEN)) & pos.pieces(Them) & ~stronglyProtected;
+        while (nonPawnEnemies)
+        {
+            Square s = pop_lsb(&nonPawnEnemies);
+            safe = mobilityArea[Us] & ~stronglyProtected;
+
+            b = attackedBy[Us][KNIGHT] & pos.attacks_from<KNIGHT>(s);
+
+            score += KnightOnQueen * popcount(b & safe);
+
+            b =  (attackedBy[Us][BISHOP] & pos.attacks_from<BISHOP>(s))
+               | (attackedBy[Us][ROOK  ] & pos.attacks_from<ROOK  >(s));
+
+            score += SliderOnQueen * popcount(b & safe);
+        }
+    }
+    else
+#endif
 #ifdef CRAZYHOUSE
     if ((pos.is_house() ? pos.count<QUEEN>(Them) - pos.count_in_hand<QUEEN>(Them) : pos.count<QUEEN>(Them)) == 1)
 #else
@@ -1322,7 +1368,6 @@ namespace {
            | (attackedBy[Us][ROOK  ] & pos.attacks_from<ROOK  >(s));
 
         score += SliderOnQueen * popcount(b & safe & attackedBy2[Us]);
-    }
     }
 
     if (T)
