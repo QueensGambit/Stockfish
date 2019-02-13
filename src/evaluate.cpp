@@ -1172,12 +1172,13 @@ namespace {
     if (pos.is_atomic())
     {
         // Opponent's pieces adjacent to our king are considered protected
-        stronglyProtected = DistanceRingBB[pos.square<KING>(Us)][1] | pos.square<KING>(Us);
+        nonPawnEnemies = pos.pieces(Them) & ~pos.pieces(PAWN);
+        stronglyProtected = attacks_bb(KING, pos.square<KING>(Us), 0)  | pos.square<KING>(Us);
         b = pos.pieces(Them) & attackedBy[Us][ALL_PIECES] & ~stronglyProtected;
         while (b)
         {
             Square s = pop_lsb(&b);
-            Bitboard blast = (DistanceRingBB[s][1] & (pos.pieces() ^ pos.pieces(PAWN))) | s;
+            Bitboard blast = (attacks_bb(KING, s, 0) & (pos.pieces() ^ pos.pieces(PAWN))) | s;
             int count = popcount(blast & pos.pieces(Them)) - popcount(blast & pos.pieces(Us)) - 1;
             if (blast & pos.pieces(Them, KING, QUEEN))
                 count++;
@@ -1186,7 +1187,6 @@ namespace {
             score += std::max(SCORE_ZERO, ThreatByBlast * count);
         }
         safe = ~(adjacent_squares_bb(pos.pieces(Us, KING, QUEEN)) | pos.pieces(Us, KING, QUEEN));
-        nonPawnEnemies = 0;
     }
     else
 #endif
@@ -1333,10 +1333,12 @@ namespace {
 #ifdef ATOMIC
     if (pos.is_atomic())
     {
-        nonPawnEnemies = adjacent_squares_bb(pos.pieces(Them, QUEEN)) & pos.pieces(Them) & ~stronglyProtected;
-        while (nonPawnEnemies)
+        // In atomic, king (or adjacent) can be attacked but not in check
+        weak = pos.pieces(Them, KING, QUEEN);
+        weak = (adjacent_squares_bb(weak) | weak) & pos.pieces(Them) & ~stronglyProtected;
+        while (weak)
         {
-            Square s = pop_lsb(&nonPawnEnemies);
+            Square s = pop_lsb(&weak);
             safe = mobilityArea[Us] & ~stronglyProtected;
 
             b = attackedBy[Us][KNIGHT] & pos.attacks_from<KNIGHT>(s);
