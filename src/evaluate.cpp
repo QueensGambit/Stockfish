@@ -430,11 +430,11 @@ namespace {
 
 #ifdef ATOMIC
   constexpr Score ThreatByBlast[PIECE_TYPE_NB] = {
-    S(PawnValueMgAtomic / 4, PawnValueEgAtomic / 4),
-    S(KnightValueMgAtomic / 4, KnightValueEgAtomic / 4),
-    S(BishopValueMgAtomic / 4, BishopValueEgAtomic / 4),
-    S(RookValueMgAtomic / 4, RookValueEgAtomic / 4),
-    S(QueenValueMgAtomic / 4, QueenValueEgAtomic / 4),
+    S(PawnValueMgAtomic / 8, PawnValueEgAtomic / 8),
+    S(KnightValueMgAtomic / 8, KnightValueEgAtomic / 8),
+    S(BishopValueMgAtomic / 8, BishopValueEgAtomic / 8),
+    S(RookValueMgAtomic / 8, RookValueEgAtomic / 8),
+    S(QueenValueMgAtomic / 8, QueenValueEgAtomic / 8),
     S(0, 0)
   };
 #endif
@@ -1189,7 +1189,7 @@ namespace {
         while (b)
         {
             Square s = pop_lsb(&b);
-            Bitboard blast = (DistanceRingBB[s][1] & (pos.pieces() ^ pos.pieces(PAWN))) | s;
+            Bitboard blast = DistanceRingBB[s][1] & (pos.pieces() ^ pos.pieces(PAWN));
             for (PieceType attackerType = PAWN; attackerType <= QUEEN; ++attackerType)
             {
                 if (! (attackedBy[Us][attackerType] & s))
@@ -1207,7 +1207,6 @@ namespace {
                     score += blastScore;
             }
         }
-        //safe = ~(adjacent_squares_bb(pos.pieces(Us, KING, QUEEN)) | pos.pieces(Us, KING, QUEEN));
     }
     else
 #endif
