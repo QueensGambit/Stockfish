@@ -1190,7 +1190,13 @@ namespace {
         {
             Square s = pop_lsb(&b);
             Bitboard blast = DistanceRingBB[s][1] & (pos.pieces() ^ pos.pieces(PAWN));
-            for (PieceType attackerType = PAWN; attackerType <= QUEEN; ++attackerType)
+            PieceType attackerType;
+            for (attackerType = QUEEN; attackerType > PAWN; --attackerType)
+            {
+                if (PseudoAttacks[attackerType][s] & pos.pieces(Us, attackerType) & blast)
+                    break;
+            }
+            for ( ; attackerType <= QUEEN; ++attackerType)
             {
                 if (! (attackedBy[Us][attackerType] & s))
                     continue;
@@ -1205,6 +1211,7 @@ namespace {
                             blastScore += ThreatByBlast[pt] * popcount(blast & pos.pieces(c,pt));
                 if (mg_value(blastScore) > 0)
                     score += blastScore;
+                break;
             }
         }
     }
