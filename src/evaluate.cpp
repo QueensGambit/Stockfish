@@ -435,7 +435,7 @@ namespace {
     S(BishopValueMgAtomic / 4, BishopValueEgAtomic / 4),
     S(RookValueMgAtomic / 4, RookValueEgAtomic / 4),
     S(QueenValueMgAtomic / 4, QueenValueEgAtomic / 4),
-    S(0, 0)
+    S(IndirectKingAttack, IndirectKingAttack)
   };
 #endif
 
@@ -1084,10 +1084,7 @@ namespace {
 
 #ifdef ATOMIC
     if (pos.is_atomic())
-    {
-        kingDanger += IndirectKingAttack * popcount(DistanceRingBB[pos.square<KING>(Us)][1] & pos.pieces(Us) & attackedBy[Them][ALL_PIECES]);
         score -= make_score(100, 100) * popcount(attackedBy[Us][KING] & pos.pieces());
-    }
 #endif
     // Transform the kingDanger units into a Score, and subtract it from the evaluation
     if (kingDanger > 100)
@@ -1184,6 +1181,36 @@ namespace {
     if (pos.is_atomic())
     {
         nonPawnEnemies = pos.pieces(Them) & ~pos.pieces(PAWN);
+        stronglyProtected = DistanceRingBB[pos.square<KING>(Them)][1] | pos.square<KING>(Them);
+        b = pos.pieces(Us) & attackedBy[Them][ALL_PIECES] & ~stronglyProtected;
+        while (b)
+        {
+            Square s = pop_lsb(&b);
+            Bitboard blast = DistanceRingBB[s][1] & (pos.pieces() ^ pos.pieces(PAWN));
+            PieceType attackerType;
+            for (attackerType = QUEEN; attackerType > PAWN; --attackerType)
+            {
+                if (PseudoAttacks[attackerType][s] & pos.pieces(Them, attackerType) & blast)
+                    break;
+            }
+            for ( ; attackerType <= QUEEN; ++attackerType)
+            {
+                if (! (attackedBy[Them][attackerType] & s))
+                    continue;
+                Score blastScore = ThreatByBlast[type_of(pos.piece_on(s))];
+                if (attackerType == PAWN || !(PseudoAttacks[attackerType][s] & pos.pieces(Them, attackerType) & blast))
+                    blastScore -= ThreatByBlast[attackerType];
+                for (Color c = WHITE; c <= BLACK; ++c)
+                    for (PieceType pt = KNIGHT; pt <= KING; ++pt)
+                        if (c == Us)
+                            blastScore -= ThreatByBlast[pt] * popcount(blast & pos.pieces(c,pt));
+                        else
+                            blastScore += ThreatByBlast[pt] * popcount(blast & pos.pieces(c,pt));
+                if (mg_value(blastScore) < 0)
+                    score += blastScore;
+                break;
+            }
+        }
         stronglyProtected = DistanceRingBB[pos.square<KING>(Us)][1] | pos.square<KING>(Us);
         b = pos.pieces(Them) & attackedBy[Us][ALL_PIECES] & ~stronglyProtected;
         while (b)
@@ -1204,7 +1231,7 @@ namespace {
                 if (attackerType == PAWN || !(PseudoAttacks[attackerType][s] & pos.pieces(Us, attackerType) & blast))
                     blastScore -= ThreatByBlast[attackerType];
                 for (Color c = WHITE; c <= BLACK; ++c)
-                    for (PieceType pt = KNIGHT; pt <= QUEEN; ++pt)
+                    for (PieceType pt = KNIGHT; pt <= KING; ++pt)
                         if (c == Us)
                             blastScore -= ThreatByBlast[pt] * popcount(blast & pos.pieces(c,pt));
                         else
