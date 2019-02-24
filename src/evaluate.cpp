@@ -1187,7 +1187,7 @@ namespace {
         {
             Square s = pop_lsb(&b);
             Bitboard blast = DistanceRingBB[s][1] & (pos.pieces() ^ pos.pieces(PAWN));
-            for (PieceType attackerType = PAWN ; attackerType <= QUEEN; ++attackerType)
+            for (PieceType attackerType = PAWN; attackerType <= QUEEN; ++attackerType)
             {
                 if (! (attackedBy[Them][attackerType] & s))
                     continue;
@@ -1202,7 +1202,6 @@ namespace {
                             blastScore += ThreatByBlast[pt] * popcount(blast & pos.pieces(c,pt));
                 if (mg_value(blastScore) < 0)
                     score += blastScore / 2;
-                break;
             }
         }
         stronglyProtected = DistanceRingBB[pos.square<KING>(Us)][1] | pos.square<KING>(Us);
@@ -1211,7 +1210,7 @@ namespace {
         {
             Square s = pop_lsb(&b);
             Bitboard blast = DistanceRingBB[s][1] & (pos.pieces() ^ pos.pieces(PAWN));
-            for (PieceType attackerType = PAWN ; attackerType <= QUEEN; ++attackerType)
+            for (PieceType attackerType = PAWN; attackerType <= QUEEN; ++attackerType)
             {
                 if (! (attackedBy[Us][attackerType] & s))
                     continue;
@@ -1226,7 +1225,6 @@ namespace {
                             blastScore += ThreatByBlast[pt] * popcount(blast & pos.pieces(c,pt));
                 if (mg_value(blastScore) > 0)
                     score += blastScore;
-                break;
             }
         }
     }
