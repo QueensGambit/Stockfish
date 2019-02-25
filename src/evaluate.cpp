@@ -435,7 +435,7 @@ namespace {
     S(BishopValueMgAtomic / 8, BishopValueEgAtomic / 8),
     S(RookValueMgAtomic / 8, RookValueEgAtomic / 8),
     S(QueenValueMgAtomic / 8, QueenValueEgAtomic / 8),
-    S(IndirectKingAttack / 2, IndirectKingAttack / 2)
+    S(IndirectKingAttack / 8, IndirectKingAttack / 8)
   };
 #endif
 
