@@ -435,7 +435,7 @@ namespace {
     S(BishopValueMgAtomic / 8, BishopValueEgAtomic / 8),
     S(RookValueMgAtomic / 8, RookValueEgAtomic / 8),
     S(QueenValueMgAtomic / 8, QueenValueEgAtomic / 8),
-    S(IndirectKingAttack, IndirectKingAttack)
+    S(IndirectKingAttack / 2, IndirectKingAttack / 2)
   };
 #endif
 
@@ -1201,7 +1201,7 @@ namespace {
                         else
                             blastScore += ThreatByBlast[pt] * popcount(blast & pos.pieces(c,pt));
                 if (mg_value(blastScore) < 0)
-                    score += blastScore / 2;
+                    score += blastScore;
             }
         }
         stronglyProtected = DistanceRingBB[pos.square<KING>(Us)][1] | pos.square<KING>(Us);
