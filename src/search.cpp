@@ -71,7 +71,7 @@ namespace {
   2234,
 #endif
 #ifdef ATOMIC
-  600,
+  592,
 #endif
 #ifdef CRAZYHOUSE
   600,
@@ -107,7 +107,7 @@ namespace {
   611,
 #endif
 #ifdef ATOMIC
-  585,
+  583,
 #endif
 #ifdef CRAZYHOUSE
   150,
@@ -143,7 +143,7 @@ namespace {
   { 331, 372 },
 #endif
 #ifdef ATOMIC
-  { 512, 400 },
+  { 510, 402 },
 #endif
 #ifdef CRAZYHOUSE
   { 256, 200 },
@@ -179,7 +179,7 @@ namespace {
   216,
 #endif
 #ifdef ATOMIC
-  200,
+  201,
 #endif
 #ifdef CRAZYHOUSE
   200,

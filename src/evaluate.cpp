@@ -81,7 +81,7 @@ namespace {
     Value(12222),
 #endif
 #ifdef ATOMIC
-    Value(12222),
+    Value(12373),
 #endif
 #ifdef CRAZYHOUSE
     Value(12222),
@@ -119,7 +119,7 @@ namespace {
     {},
 #endif
 #ifdef ATOMIC
-    { 0, 0, 76, 64, 46, 11 },
+    { 0, 0, 76, 63, 47, 11 },
 #endif
 #ifdef CRAZYHOUSE
     { 0, 0, 112, 87, 63, 2 },
@@ -157,7 +157,7 @@ namespace {
     {},
 #endif
 #ifdef ATOMIC
-    {   280,  171,  -97,  -35,  147, -618,  -12,    5,   -7,   29 },
+    {   287,  172,  -96,  -35,  147, -624,  -12,    5,   -7,   29 },
 #endif
 #ifdef CRAZYHOUSE
     {   119,  439, -100,  -35,  130, -613,   -6,    5,   -1,  320 },
@@ -240,19 +240,19 @@ namespace {
 #endif
 #ifdef ATOMIC
     {
-      { S(-86,-77), S(-79,-62), S(-38,-42), S( -2,-24), S( 14,  8), S( 23, 24), // Knights
-        S( 41, 26), S( 31, 22), S( 37, 28) },
-      { S(-54,-65), S(-17,-34), S( 13, -9), S( 24, 20), S( 21, 24), S( 55, 41), // Bishops
-        S( 32, 51), S( 67, 66), S( 49, 51), S( 58, 73), S( 71, 75), S( 83, 80),
-        S( 96, 90), S(108, 86) },
-      { S(-60,-72), S(-32,-29), S(-18,  9), S(-19, 30), S(-19, 58), S( 20, 80), // Rooks
-        S( 12,102), S( 11,132), S( 21,131), S( 35,161), S( 35,173), S( 38,198),
-        S( 24,177), S( 60,186), S( 58,154) },
-      { S(-42,-43), S(-14,-16), S( -5,  1), S(  0, 23), S(  6, 24), S( 24, 58), // Queens
-        S( 20, 55), S( 31, 67), S( 48, 91), S( 29, 77), S( 47, 93), S( 70,105),
-        S( 63,105), S( 76,123), S( 73,112), S( 49,130), S( 57,128), S( 74,132),
-        S( 78,124), S(115,129), S(115,142), S(103,139), S(111,144), S(105,161),
-        S(113,157), S(126,175), S(133,173), S(131,208) }
+      { S(-84,-77), S(-80,-62), S(-38,-43), S( -2,-24), S( 14,  8), S( 23, 24), // Knights
+        S( 42, 26), S( 30, 22), S( 37, 28) },
+      { S(-54,-63), S(-17,-34), S( 13, -9), S( 24, 20), S( 20, 24), S( 55, 41), // Bishops
+        S( 32, 50), S( 66, 65), S( 48, 51), S( 58, 73), S( 71, 74), S( 83, 80),
+        S( 97, 90), S(108, 87) },
+      { S(-58,-70), S(-32,-29), S(-18,  9), S(-19, 30), S(-19, 57), S( 20, 81), // Rooks
+        S( 12,100), S( 11,135), S( 21,133), S( 35,163), S( 35,173), S( 37,202),
+        S( 25,175), S( 60,185), S( 59,157) },
+      { S(-42,-43), S(-14,-16), S( -5,  1), S(  0, 23), S(  6, 23), S( 25, 59), // Queens
+        S( 20, 55), S( 31, 69), S( 48, 92), S( 29, 77), S( 46, 93), S( 69,104),
+        S( 64,103), S( 77,122), S( 73,111), S( 50,131), S( 58,131), S( 74,131),
+        S( 77,124), S(115,126), S(115,143), S(104,139), S(113,143), S(105,167),
+        S(110,156), S(124,178), S(133,174), S(131,204) }
     },
 #endif
 #ifdef CRAZYHOUSE
@@ -426,13 +426,14 @@ namespace {
   };
 
 #ifdef ATOMIC
+  constexpr Score AtomicConfinedKing = S(100, 102);
   constexpr Score ThreatByBlast[PIECE_TYPE_NB] = {
-    S(PawnValueMgAtomic / 8, PawnValueEgAtomic / 8),
-    S(KnightValueMgAtomic / 8, KnightValueEgAtomic / 8),
-    S(BishopValueMgAtomic / 8, BishopValueEgAtomic / 8),
-    S(RookValueMgAtomic / 8, RookValueEgAtomic / 8),
-    S(QueenValueMgAtomic / 8, QueenValueEgAtomic / 8),
-    S(100, 100)
+    S( 29,  48),
+    S( 55,  78),
+    S( 67,  88),
+    S(100, 131),
+    S(183, 250),
+    S( 99,  99)
   };
 #endif
 
@@ -505,7 +506,7 @@ namespace {
     { S(0, 0), S(5, 7), S(5, 14), S(31, 38), S(73, 73), S(166, 166), S(252, 252) },
 #endif
 #ifdef ATOMIC
-    { S(0, 0), S(95, 86), S(118, 43), S(94, 61), S(142, 62), S(196, 150), S(204, 256) },
+    { S(0, 0), S(97, 86), S(117, 43), S(93, 62), S(140, 60), S(197, 149), S(201, 254) },
 #endif
 #ifdef CRAZYHOUSE
     { S(0, 0), S(15, 27), S(23, 13), S(13, 19), S(88, 111), S(177, 140), S(229, 293) },
@@ -1081,7 +1082,7 @@ namespace {
 
 #ifdef ATOMIC
     if (pos.is_atomic())
-        score -= make_score(100, 100) * popcount(attackedBy[Us][KING] & pos.pieces());
+        score -= AtomicConfinedKing * popcount(attackedBy[Us][KING] & pos.pieces());
 #endif
     // Transform the kingDanger units into a Score, and subtract it from the evaluation
     if (kingDanger > 100)
