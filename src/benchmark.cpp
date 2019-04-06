@@ -247,6 +247,7 @@ const vector<string> Defaults[SUBVARIANT_NB] = {
 #endif
 #ifdef HELPMATE
   {
+    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
     "R7/8/8/8/8/8/7k/5K2 b - - 0 1",
     "8/8/8/8/k7/2R5/p5N1/7K b - - 0 1"
   },
