@@ -274,6 +274,11 @@ const vector<string> Defaults[SUBVARIANT_NB] = {
     "rnbqk2r/ppppkppp/5n2/4p3/4P3/5N2/PPPPKPPP/RNBQK2R w KQ - 4 4"
   },
 #endif
+#ifdef ANTIHELPMATE
+  {
+    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+  },
+#endif
 #ifdef SUICIDE
   {
     "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1",
