@@ -1179,12 +1179,12 @@ namespace {
     if (pos.is_atomic())
     {
         nonPawnEnemies = pos.pieces(Them) & ~pos.pieces(PAWN);
-        stronglyProtected = DistanceRingBB[pos.square<KING>(Them)][1] | pos.square<KING>(Them);
+        stronglyProtected = attacks_bb(KING, pos.square<KING>(Them), 0) | pos.square<KING>(Them);
         b = pos.pieces(Us) & attackedBy[Them][ALL_PIECES] & ~stronglyProtected;
         while (b)
         {
             Square s = pop_lsb(&b);
-            Bitboard blast = DistanceRingBB[s][1] & (pos.pieces() ^ pos.pieces(PAWN));
+            Bitboard blast = attacks_bb(KING, s, 0) & (pos.pieces() ^ pos.pieces(PAWN));
             for (PieceType attackerType = PAWN; attackerType <= QUEEN; ++attackerType)
             {
                 if (! (attackedBy[Them][attackerType] & s))
@@ -1202,12 +1202,12 @@ namespace {
                     score += blastScore;
             }
         }
-        stronglyProtected = DistanceRingBB[pos.square<KING>(Us)][1] | pos.square<KING>(Us);
+        stronglyProtected = attacks_bb(KING, pos.square<KING>(Us), 0) | pos.square<KING>(Us);
         b = pos.pieces(Them) & attackedBy[Us][ALL_PIECES] & ~stronglyProtected;
         while (b)
         {
             Square s = pop_lsb(&b);
-            Bitboard blast = DistanceRingBB[s][1] & (pos.pieces() ^ pos.pieces(PAWN));
+            Bitboard blast = attacks_bb(KING, s, 0) & (pos.pieces() ^ pos.pieces(PAWN));
             for (PieceType attackerType = PAWN; attackerType <= QUEEN; ++attackerType)
             {
                 if (! (attackedBy[Us][attackerType] & s))
