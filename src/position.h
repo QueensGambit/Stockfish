@@ -927,8 +927,8 @@ inline bool Position::is_race_draw() const {
 inline bool Position::is_race_loss() const {
   if (rank_of(square<KING>(~sideToMove)) != RANK_8)
       return false;
-  if (rank_of(square<KING>(sideToMove)) < (sideToMove == WHITE ? RANK_8 : RANK_7))
-      return true;
+  if (sideToMove == WHITE)
+      return !is_race_draw();
   // Check whether the black king can move to the eighth rank
   Bitboard b = attacks_from<KING>(square<KING>(sideToMove)) & rank_bb(RANK_8) & ~pieces(sideToMove);
   while (b)
@@ -1100,11 +1100,8 @@ inline Value Position::stalemate_value(int ply, Value drawValue) const {
 inline bool Position::capture_or_promotion(Move m) const {
   assert(is_ok(m));
 #ifdef RACE
-  if (is_race())
-  {
-    Square from = from_sq(m), to = to_sq(m);
-    return (type_of(board[from]) == KING && rank_of(to) > rank_of(from)) || !empty(to);
-  }
+  if (is_race() && type_of(moved_piece(m)) == KING && rank_of(to_sq(m)) == RANK_8)
+    return true;
 #endif
 #ifdef CRAZYHOUSE
   return type_of(m) != NORMAL ? type_of(m) != DROP && type_of(m) != CASTLING : !empty(to_sq(m));
