@@ -426,7 +426,6 @@ namespace {
   };
 
 #ifdef ATOMIC
-  constexpr Score AtomicConfinedKing = S(100, 101);
   constexpr Score ThreatByBlast[PIECE_TYPE_NB] = {
     S( 29,  49),
     S( 55,  79),
@@ -1080,10 +1079,6 @@ namespace {
         }
 #endif
 
-#ifdef ATOMIC
-    if (pos.is_atomic())
-        score -= AtomicConfinedKing * popcount(attackedBy[Us][KING] & pos.pieces());
-#endif
     // Transform the kingDanger units into a Score, and subtract it from the evaluation
     if (kingDanger > 100)
     {
@@ -1198,8 +1193,6 @@ namespace {
                             blastScore -= ThreatByBlast[pt] * popcount(blast & pos.pieces(c,pt));
                         else
                             blastScore += ThreatByBlast[pt] * popcount(blast & pos.pieces(c,pt));
-                if (mg_value(blastScore) < 0)
-                    score += blastScore;
             }
         }
         stronglyProtected = attacks_bb(KING, pos.square<KING>(Us), 0) | pos.square<KING>(Us);
@@ -1221,8 +1214,6 @@ namespace {
                             blastScore -= ThreatByBlast[pt] * popcount(blast & pos.pieces(c,pt));
                         else
                             blastScore += ThreatByBlast[pt] * popcount(blast & pos.pieces(c,pt));
-                if (mg_value(blastScore) > 0)
-                    score += blastScore;
             }
         }
     }
