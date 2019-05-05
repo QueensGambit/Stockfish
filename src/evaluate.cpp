@@ -81,7 +81,7 @@ namespace {
     Value(12222),
 #endif
 #ifdef ATOMIC
-    Value(12373),
+    Value(12462),
 #endif
 #ifdef CRAZYHOUSE
     Value(12222),
@@ -119,7 +119,7 @@ namespace {
     {},
 #endif
 #ifdef ATOMIC
-    { 0, 0, 76, 63, 47, 11 },
+    { 0, 0, 77, 64, 47, 11 },
 #endif
 #ifdef CRAZYHOUSE
     { 0, 0, 112, 87, 63, 2 },
@@ -157,7 +157,7 @@ namespace {
     {},
 #endif
 #ifdef ATOMIC
-    {   287,  172,  -96,  -35,  147, -624,  -12,    5,   -7,   29 },
+    {   292,  171,  -95,  -35,  149, -618,  -12,    5,   -7,   29 },
 #endif
 #ifdef CRAZYHOUSE
     {   119,  439, -100,  -35,  130, -613,   -6,    5,   -1,  320 },
@@ -426,14 +426,14 @@ namespace {
   };
 
 #ifdef ATOMIC
-  constexpr Score AtomicConfinedKing = S(100, 102);
+  constexpr Score AtomicConfinedKing = S(100, 101);
   constexpr Score ThreatByBlast[PIECE_TYPE_NB] = {
-    S( 29,  48),
-    S( 55,  78),
-    S( 67,  88),
+    S( 29,  49),
+    S( 55,  79),
+    S( 68,  87),
     S(100, 131),
-    S(183, 250),
-    S( 99,  99)
+    S(182, 251),
+    S( 98, 100)
   };
 #endif
 
@@ -506,7 +506,7 @@ namespace {
     { S(0, 0), S(5, 7), S(5, 14), S(31, 38), S(73, 73), S(166, 166), S(252, 252) },
 #endif
 #ifdef ATOMIC
-    { S(0, 0), S(97, 86), S(117, 43), S(93, 62), S(140, 60), S(197, 149), S(201, 254) },
+    { S(0, 0), S(97, 84), S(116, 43), S(94, 63), S(141, 59), S(199, 150), S(200, 258) },
 #endif
 #ifdef CRAZYHOUSE
     { S(0, 0), S(15, 27), S(23, 13), S(13, 19), S(88, 111), S(177, 140), S(229, 293) },
