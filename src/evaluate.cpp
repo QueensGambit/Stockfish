@@ -205,7 +205,7 @@ namespace {
 
   // MobilityBonus[PieceType-2][attacked] contains bonuses for middle and end game,
   // indexed by piece type and number of attacked squares in the mobility area.
-  constexpr Score MobilityBonus[VARIANT_NB][4][32] = {
+  Score MobilityBonus[VARIANT_NB][4][32] = {
     {
     { S(-62,-81), S(-53,-56), S(-12,-30), S( -4,-14), S(  3,  8), S( 13, 15), // Knights
       S( 22, 23), S( 28, 27), S( 33, 33) },
@@ -240,7 +240,7 @@ namespace {
 #endif
 #ifdef ATOMIC
     {
-      { S(-86,-77), S(-79,-64), S(-36,-40), S( -2,-24), S( 14,  8), S( 23, 25), // Knights
+      { S(-86,-77), S(-79,-64), S(-36,-40), S( -5,-24), S( 14,  8), S( 23, 25), // Knights
         S( 40, 26), S( 30, 23), S( 37, 29) },
       { S(-55,-65), S(-17,-34), S( 13, -9), S( 24, 20), S( 22, 25), S( 57, 39), // Bishops
         S( 32, 52), S( 66, 66), S( 51, 52), S( 56, 74), S( 73, 76), S( 85, 81),
@@ -248,7 +248,7 @@ namespace {
       { S(-61,-73), S(-32,-28), S(-18,  9), S(-19, 30), S(-19, 57), S( 20, 78), // Rooks
         S( 12,104), S( 11,134), S( 21,133), S( 33,166), S( 35,168), S( 38,185),
         S( 25,172), S( 60,182), S( 58,155) },
-      { S(-43,-43), S(-14,-16), S( -5,  1), S(  0, 23), S(  6, 24), S( 23, 59), // Queens
+      { S(-43,-43), S(-14,-16), S( -5,  5), S(  5, 23), S(  6, 24), S( 23, 59), // Queens
         S( 20, 55), S( 32, 66), S( 47, 89), S( 29, 77), S( 47, 89), S( 69,103),
         S( 63,110), S( 76,131), S( 73,115), S( 48,132), S( 58,131), S( 75,135),
         S( 82,122), S(111,130), S(114,144), S(101,139), S(106,146), S(107,167),
@@ -409,6 +409,7 @@ namespace {
     },
 #endif
   };
+TUNE(MobilityBonus[ATOMIC_VARIANT]);
 
   // RookOnFile[semiopen/open] contains bonuses for each rook when there is
   // no (friendly) pawn on the rook file.
