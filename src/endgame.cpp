@@ -351,6 +351,18 @@ Value Endgame<CHESS_VARIANT, KNNKP>::operator()(const Position& pos) const {
 template<> Value Endgame<CHESS_VARIANT, KNNK>::operator()(const Position&) const { return VALUE_DRAW; }
 
 
+// Any vs K is drawn except for cornered N vs K (not checked).
+#ifdef HORDE
+template<>
+ScaleFactor Endgame<HORDE_VARIANT, AK>::operator()(const Position& pos) const {
+
+  assert(pos.variant() == HORDE_VARIANT);
+  assert(pos.count<ALL_PIECES>(strongSide) == 1);
+  assert(pos.count<ALL_PIECES>(weakSide) == 1);
+  return SCALE_FACTOR_DRAW;
+}
+#endif
+
 /// KB and one or more pawns vs K. It checks for draws with rook pawns and
 /// a bishop of the wrong color. If such a draw is detected, SCALE_FACTOR_DRAW
 /// is returned. If not, the return value is SCALE_FACTOR_NONE, i.e. no scaling

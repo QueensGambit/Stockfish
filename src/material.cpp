@@ -357,6 +357,9 @@ namespace {
   Endgame<ATOMIC_VARIANT, KXK> EvaluateAtomicKXK[] = { Endgame<ATOMIC_VARIANT, KXK>(WHITE), Endgame<ATOMIC_VARIANT, KXK>(BLACK) };
 #endif
 
+#ifdef HORDE
+  Endgame<HORDE_VARIANT, AK> ScaleHordeAK[] = { Endgame<HORDE_VARIANT, AK>(WHITE), Endgame<HORDE_VARIANT, AK>(BLACK) };
+#endif
   Endgame<CHESS_VARIANT, KBPsK>  ScaleKBPsK[]  = { Endgame<CHESS_VARIANT, KBPsK>(WHITE),  Endgame<CHESS_VARIANT, KBPsK>(BLACK) };
   Endgame<CHESS_VARIANT, KQKRPs> ScaleKQKRPs[] = { Endgame<CHESS_VARIANT, KQKRPs>(WHITE), Endgame<CHESS_VARIANT, KQKRPs>(BLACK) };
   Endgame<CHESS_VARIANT, KPsK>   ScaleKPsK[]   = { Endgame<CHESS_VARIANT, KPsK>(WHITE),   Endgame<CHESS_VARIANT, KPsK>(BLACK) };
@@ -520,8 +523,9 @@ Entry* probe(const Position& pos) {
       return e;
   }
 
-  if (pos.variant() == CHESS_VARIANT)
+  switch (pos.variant())
   {
+  case CHESS_VARIANT:
   // We didn't find any specialized scaling function, so fall back on generic
   // ones that refer to more than one material distribution. Note that in this
   // case we don't return after setting the function.
@@ -567,6 +571,15 @@ Entry* probe(const Position& pos) {
   if (!pos.count<PAWN>(BLACK) && npm_b - npm_w <= BishopValueMg)
       e->factor[BLACK] = uint8_t(npm_b <  RookValueMg   ? SCALE_FACTOR_DRAW :
                                  npm_w <= BishopValueMg ? 4 : 14);
+  break;
+#ifdef HORDE
+  case HORDE_VARIANT:
+  for (Color c = WHITE; c <= BLACK; ++c)
+      if (pos.is_horde_color(c) && pos.count<ALL_PIECES>() == 2)
+          e->scalingFunction[c] = &ScaleHordeAK[c];
+  break;
+#endif
+  default: break;
   }
 
   // Evaluate the material imbalance. We use PIECE_TYPE_NONE as a place holder

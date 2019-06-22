@@ -59,6 +59,9 @@ enum EndgameCode {
   KQKR,  // KQ vs KR
 
   SCALING_FUNCTIONS,
+#ifdef HORDE
+  AK,      // Any vs K
+#endif
   KBPsK,   // KB and pawns vs K
   KQKRPs,  // KQ vs KR and pawns
   KRPKR,   // KRP vs KR
