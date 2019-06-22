@@ -520,8 +520,9 @@ Entry* probe(const Position& pos) {
       return e;
   }
 
-  if (pos.variant() == CHESS_VARIANT)
+  switch (pos.variant())
   {
+  case CHESS_VARIANT:
   // We didn't find any specialized scaling function, so fall back on generic
   // ones that refer to more than one material distribution. Note that in this
   // case we don't return after setting the function.
@@ -567,6 +568,15 @@ Entry* probe(const Position& pos) {
   if (!pos.count<PAWN>(BLACK) && npm_b - npm_w <= BishopValueMg)
       e->factor[BLACK] = uint8_t(npm_b <  RookValueMg   ? SCALE_FACTOR_DRAW :
                                  npm_w <= BishopValueMg ? 4 : 14);
+  break;
+#ifdef HORDE
+  case HORDE_VARIANT:
+  for (Color c = WHITE; c <= BLACK; ++c)
+      if (pos.is_horde_color(c))
+          e->factor[c] = pos.count<PAWN>(c) * SCALE_FACTOR_NORMAL / 36;
+  break;
+#endif
+  default: break;
   }
 
   // Evaluate the material imbalance. We use PIECE_TYPE_NONE as a place holder
