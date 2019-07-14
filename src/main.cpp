@@ -33,6 +33,7 @@ namespace PSQT {
   void init();
 }
 
+/*
 int main(int argc, char* argv[]) {
 
   std::cout << engine_info() << std::endl;
@@ -52,3 +53,4 @@ int main(int argc, char* argv[]) {
   Threads.set(0);
   return 0;
 }
+*/
