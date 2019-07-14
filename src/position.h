@@ -288,6 +288,7 @@ public:
   void flip();
 
 private:
+  friend class Board;
   // Initialization helpers (used while setting up a position)
   void set_castling_right(Color c, Square kfrom, Square rfrom);
   void set_state(StateInfo* si) const;
