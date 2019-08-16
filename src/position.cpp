@@ -464,7 +464,7 @@ Position& Position::set(const string& fenStr, bool isChess960, Variant v, StateI
   gamePly = std::max(2 * (gamePly - 1), 0) + (sideToMove == BLACK);
 
   chess960 = isChess960;
-  thisThread = th;
+  //thisThread = th;
   set_state(st);
 
   assert(pos_is_ok());
@@ -1406,7 +1406,7 @@ void Position::do_move(Move m, StateInfo& newSt, bool givesCheck) {
   assert(!is_race() || !givesCheck);
 #endif
 
-  thisThread->nodes.fetch_add(1, std::memory_order_relaxed);
+  //thisThread->nodes.fetch_add(1, std::memory_order_relaxed);
   Key k = st->key ^ Zobrist::side;
 
   // Copy some fields of the old state to our new StateInfo object except the
@@ -1567,7 +1567,7 @@ void Position::do_move(Move m, StateInfo& newSt, bool givesCheck) {
       }
 #endif
 
-      prefetch(thisThread->materialTable[st->materialKey]);
+      //prefetch(thisThread->materialTable[st->materialKey]);
 
       // Reset rule 50 counter
       st->rule50 = 0;
