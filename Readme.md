@@ -9,10 +9,11 @@ Multi Variant Stockfish is a [Stockfish](https://github.com/official-stockfish/S
 - [Horde](https://lichess.org/variant/horde)
 - [King of the Hill](https://lichess.org/variant/kingOfTheHill)
 - [Racing Kings](https://lichess.org/variant/racingKings)
-- [Giveaway](https://lichess.org/variant/antichess)
+- [Antichess](https://lichess.org/variant/antichess)
 - [Three-Check](https://lichess.org/variant/threeCheck)
-- [Chess960](https://lichess.org/variant/chess960) (played natively by Official Stockfish)
+- [Chess960](https://lichess.org/variant/chess960) (played natively by official Stockfish)
 - Losers
+- Giveaway
 - Suicide
 - Loop
 - Extinction
@@ -81,7 +82,7 @@ Currently, Stockfish has the following UCI options:
     this equal to the number of CPU cores available.
 
   * #### Hash
-    The size of the hash table in MB.
+    The size of the hash table in MB. It is recommended to set Hash after setting Threads.
 
   * #### Clear Hash
     Clear the hash table.
@@ -104,6 +105,11 @@ Currently, Stockfish has the following UCI options:
   * #### UCI_Elo
     If enabled by UCI_LimitStrength, aim for an engine strength of the given Elo.
     This Elo rating has been calibrated at a time control of 60s+0.6s and anchored to CCRL 40/4.
+
+  * #### UCI_ShowWDL
+    If enabled, show approximate WDL statistics as part of the engine output.
+    These WDL numbers model expected game outcomes for a given evaluation and
+    game ply for engine self-play at fishtest LTC conditions (60+0.6s per game).
 
   * #### Move Overhead
     Assume a time delay of x ms due to network and GUI overheads. This is useful to
@@ -177,21 +183,59 @@ more compact than Nalimov tablebases, while still storing all information
 needed for optimal play and in addition being able to take into account
 the 50-move rule.
 
+## Large Pages
+
+Stockfish supports large pages on Linux and Windows. Large pages make
+the hash access more efficient, improving the engine speed, especially
+on large hash sizes. Typical increases are 5..10% in terms of nps, but
+speed increases up to 30% have been measured. The support is
+automatic. Stockfish attempts to use large pages when available and
+will fall back to regular memory allocation when this is not the case.
+
+### Support on Linux
+
+Large page support on Linux is obtained by the Linux kernel
+transparent huge pages functionality. Typically, transparent huge pages
+are already enabled and no configuration is needed.
+
+### Support on Windows
+
+The use of large pages requires "Lock Pages in Memory" privilege. See
+[Enable the Lock Pages in Memory Option (Windows)](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/enable-the-lock-pages-in-memory-option-windows)
+on how to enable this privilege. Logout/login may be needed
+afterwards. Due to memory fragmentation, it may not always be
+possible to allocate large pages even when enabled. A reboot
+might alleviate this problem. To determine whether large pages
+are in use, see the engine log.
 
 ## Compiling Stockfish yourself from the sources
 
-On Unix-like systems, it should be possible to compile Stockfish
-directly from the source code with the included Makefile.
+Stockfish has support for 32 or 64-bit CPUs, certain hardware
+instructions, big-endian machines such as Power PC, and other platforms.
 
-Stockfish has support for 32 or 64-bit CPUs, the hardware POPCNT
-instruction, big-endian machines such as Power PC, and other platforms.
+On Unix-like systems, it should be easy to compile Stockfish
+directly from the source code with the included Makefile in the folder
+`src`. In general it is recommended to run `make help` to see a list of make
+targets with corresponding descriptions.
 
-In general it is recommended to run `make help` to see a list of make
-targets with corresponding descriptions. When not using the Makefile to
-compile (for instance with Microsoft MSVC) you need to manually
-set/unset some switches in the compiler command line; see file *types.h*
-for a quick reference.
+```
+    cd src
+    make help
+    make build ARCH=x86-64-modern
+```
 
+When not using the Makefile to compile (for instance with Microsoft MSVC) you
+need to manually set/unset some switches in the compiler command line; see
+file *types.h* for a quick reference.
+
+When reporting an issue or a bug, please tell us which version and
+compiler you used to create your executable. These informations can
+be found by typing the following commands in a console:
+
+```
+    ./stockfish
+    compiler
+```
 
 ## Understanding the code base and participating in the project
 
@@ -200,13 +244,13 @@ community effort. There are a few ways to help contribute to its growth.
 
 ### Donating hardware
 
-Improving Stockfish requires a massive amount of testing. You can donate
-your hardware resources by installing the [Fishtest Worker](https://github.com/glinscott/fishtest/wiki/Running-the-worker)
-and view the current tests on [Fishtest](http://tests.stockfishchess.org/tests).
+Improving Multi-Variant Stockfish requires a massive amount of testing. You can donate
+your hardware resources by installing the [Multi Variant Fishtest Worker](https://github.com/ianfab/fishtest/wiki)
+and view the current tests on [Multi Variant Fishtest](http://www.variantfishtest.org:6543/tests).
 
 ### Improving the code
 
-If you want to help improve the code, there are several valuable ressources:
+If you want to help improve the code, there are several valuable resources:
 
 * [In this wiki,](https://www.chessprogramming.org) many techniques used in
 Stockfish are explained with a lot of background information.
@@ -218,7 +262,7 @@ Nevertheless, a helpful resource.
 
 * The latest source can always be found on [GitHub](https://github.com/official-stockfish/Stockfish).
 Discussions about Stockfish take place in the [FishCooking](https://groups.google.com/forum/#!forum/fishcooking)
-group and engine testing is done on [Fishtest](http://tests.stockfishchess.org/tests).
+group and engine testing is done on [Fishtest](https://tests.stockfishchess.org/tests).
 If you want to help improve Stockfish, please read this [guideline](https://github.com/glinscott/fishtest/wiki/Creating-my-first-test)
 first, where the basics of Stockfish development are explained.
 

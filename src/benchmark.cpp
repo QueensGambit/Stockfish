@@ -2,7 +2,7 @@
   Stockfish, a UCI chess playing engine derived from Glaurung 2.1
   Copyright (C) 2004-2008 Tord Romstad (Glaurung author)
   Copyright (C) 2008-2015 Marco Costalba, Joona Kiiski, Tord Romstad
-  Copyright (C) 2015-2019 Marco Costalba, Joona Kiiski, Gary Linscott, Tord Romstad
+  Copyright (C) 2015-2020 Marco Costalba, Joona Kiiski, Gary Linscott, Tord Romstad
 
   Stockfish is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -65,6 +65,11 @@ const vector<string> Defaults[SUBVARIANT_NB] = {
   "1r3k2/4q3/2Pp3b/3Bp3/2Q2p2/1p1P2P1/1P2KP2/3N4 w - - 0 1",
   "6k1/4pp1p/3p2p1/P1pPb3/R7/1r2P1PP/3B1P2/6K1 w - - 0 1",
   "8/3p3B/5p2/5P2/p7/PP5b/k7/6K1 w - - 0 1",
+  "5rk1/q6p/2p3bR/1pPp1rP1/1P1Pp3/P3B1Q1/1K3P2/R7 w - - 93 90",
+  "4rrk1/1p1nq3/p7/2p1P1pp/3P2bp/3Q1Bn1/PPPB4/1K2R1NR w - - 40 21",
+  "r3k2r/3nnpbp/q2pp1p1/p7/Pp1PPPP1/4BNN1/1P5P/R2Q1RK1 w kq - 0 16",
+  "3Qb1k1/1r2ppb1/pN1n2q1/Pp1Pp1Pr/4P2p/4BP2/4B1R1/1R5K b - - 11 40",
+  "4k3/3q1r2/1N2r1b1/3ppN2/2nPP3/1B1R2n1/2R1Q3/3K4 w - - 5 1",
 
   // 5-man positions
   "8/8/8/8/5kp1/P7/8/1K1N4 w - - 0 1",     // Kc2 - mate
@@ -93,7 +98,7 @@ const vector<string> Defaults[SUBVARIANT_NB] = {
   },
 #ifdef ANTI
   {
-    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1",
     "rn1qkbnr/p1pBpppp/8/8/8/4P3/PPPP1PbP/RNBQK1NR w - - 0 4",
     "rnbqkbnr/p2p1ppp/8/2p1p3/2pP4/2N3P1/PP2PP1P/R1BQKBNR b - d3 0 5",
     "rnb1kbn1/p4ppr/8/3q4/1p6/6PB/P3PP1P/R1B1K1NR b - - 1 11",
@@ -130,6 +135,7 @@ const vector<string> Defaults[SUBVARIANT_NB] = {
     "r2qk2r/ppQ1p2p/2p1bn2/2np4/8/2N1PP2/PPPP2PP/R1B1K2R b KQkq - 2 12",
     "7r/1p3k1p/4p3/5pp1/3P1P2/1Pn1P3/2P3PP/R5K1 w - - 3 16",
     "2k2r2/p3p2p/5r2/1p1p1n2/8/3PP3/PPPB2PP/R3KR2 w Q - 5 17",
+    "3k2n1/r5br/pppppppp/8/PPPPPPPP/8/3NQ3/R1B1KB1R b KQ - 0 16",
     "2k5/p6p/8/1p2p3/PP1p4/4P3/2P2rPP/K3R3 b - - 0 1",
     "5r2/p6k/6p1/1p1p2Bp/8/7P/PPP3P1/5R1K w - - 1 1",
     "6k1/1pp3pp/5p2/8/8/2P1P3/5PPP/6K1 w - - 0 1",
@@ -147,6 +153,7 @@ const vector<string> Defaults[SUBVARIANT_NB] = {
     "r3kb1r/1bpppppp/p1N2p2/2NPP3/2PP4/2N2Pb1/P3P1R1/R1Q2KBq[Pn] w kq - 54 28",
     "7k/Q2P1pp1/2PPpn1p/3p1b2/3P4/P1n1P3/P1n1bPPP/R1B3KR[RRqbnp] w - - 48 25", // promotion
     "r5k1/p4ppp/4p3/3p2qn/3PB3/4P1B1/PrP2PPP/R4RK1[PBQPBnpnn] w - - 42 22", // syuuban
+    "r4r1k/ppp1Nppp/3p1n2/4p3/2B1P3/2PP4/PP3PPP/R1BR2K1[BQNnqb] b - - 0 15", // dynamic middlegame
 
     // Checkmate
     "r1b2rk1/pppp1ppp/2P2b2/1N6/5N2/4P1K1/P1P4P/1Nrb1b1n~[QQNPPrp] w - - 64 33", // promoted knight
@@ -172,7 +179,8 @@ const vector<string> Defaults[SUBVARIANT_NB] = {
     "rnbqkbnr/pppppppp/8/1PP2PP1/PPPPPPPP/PPPPPPPP/PPPPPPPP/PPPPPPPP w kq - 0 1",
     "pppppppp/pppppppp/pppppppp/pppppppp/1pp2pp1/8/PPPPPPPP/RNBQKBNR w KQ - 0 1",
     "rnb3r1/1p1p1k2/pPpP1P2/P1PPPPP1/1PP1PP2/PPP5/PPPP1P1P/PPP3qP w - - 0 1",
-    "rn2qk2/1b1p1pbr/3P2n1/pPP1P1Pp/P1PPPP1P/PPPPPPPP/PPP1PPPP/PP4PP w - - 1 22"
+    "rn2qk2/1b1p1pbr/3P2n1/pPP1P1Pp/P1PPPP1P/PPPPPPPP/PPP1PPPP/PP4PP w - - 1 22",
+    "2b1k2r/2P1n1p1/1P2P1Pp/2PP3P/3PP1PP/4PPPP/5PPP/1q4P1 b k - 0 34"
   },
 #endif
 #ifdef KOTH
@@ -267,6 +275,23 @@ const vector<string> Defaults[SUBVARIANT_NB] = {
     "rnbqk2r/ppppkppp/5n2/4p3/4P3/5N2/PPPPKPPP/RNBQK2R w KQ - 4 4"
   },
 #endif
+#ifdef ANTIHELPMATE
+  {
+    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+  },
+#endif
+#ifdef HELPMATE
+  {
+    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "R7/8/8/8/8/8/7k/5K2 b - - 0 1",
+    "8/8/8/8/k7/2R5/p5N1/7K b - - 0 1"
+  },
+#endif
+#ifdef GIVEAWAY
+  {
+    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+  },
+#endif
 #ifdef SUICIDE
   {
     "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1",
@@ -345,6 +370,16 @@ const vector<string> Defaults[SUBVARIANT_NB] = {
 #ifdef PLACEMENT
   {
     "8/pppppppp/8/8/8/8/PPPPPPPP/8[KQRRBBNNkqrrbbnn] w - -",
+  },
+#endif
+#ifdef KNIGHTRELAY
+  {
+    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+  },
+#endif
+#ifdef RELAY
+  {
+    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
   },
 #endif
 #ifdef SLIPPEDGRID
@@ -441,7 +476,7 @@ vector<string> setup_bench(const Position& current, istream& is) {
   string fenFile   = (is >> token) ? token : "default";
   string limitType = (is >> token) ? token : "depth";
 
-  go = "go " + limitType + " " + limit;
+  go = limitType == "eval" ? "eval" : "go " + limitType + " " + limit;
 
   if (fenFile == "default")
       fens = Defaults[variant];
