@@ -1,8 +1,6 @@
 /*
   Stockfish, a UCI chess playing engine derived from Glaurung 2.1
-  Copyright (C) 2004-2008 Tord Romstad (Glaurung author)
-  Copyright (C) 2008-2015 Marco Costalba, Joona Kiiski, Tord Romstad
-  Copyright (C) 2015-2020 Marco Costalba, Joona Kiiski, Gary Linscott, Tord Romstad
+  Copyright (C) 2004-2020 The Stockfish developers (see AUTHORS file)
 
   Stockfish is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -33,7 +31,7 @@ namespace {
 
   // Pawn penalties
   constexpr Score Backward[VARIANT_NB] = {
-    S( 9, 24),
+    S( 8, 25),
 #ifdef ANTI
     S(26, 50),
 #endif
@@ -69,7 +67,7 @@ namespace {
 #endif
   };
   constexpr Score Doubled[VARIANT_NB] = {
-    S(11, 56),
+    S(10, 55),
 #ifdef ANTI
     S( 4, 51),
 #endif
@@ -105,7 +103,7 @@ namespace {
 #endif
   };
   constexpr Score Isolated[VARIANT_NB] = {
-    S( 5, 15),
+    S( 3, 15),
 #ifdef ANTI
     S(54, 69),
 #endif
@@ -140,13 +138,18 @@ namespace {
     S(13, 16),
 #endif
   };
-  constexpr Score WeakLever     = S( 0, 56);
-  constexpr Score WeakUnopposed = S(13, 27);
+  constexpr Score WeakLever     = S( 3, 55);
+  constexpr Score WeakUnopposed = S(13, 25);
 
-  constexpr Score BlockedStorm[RANK_NB]  = {S( 0, 0), S( 0, 0), S( 76, 78), S(-10, 15), S(-7, 10), S(-4, 6), S(-1, 2)};
+  // Bonus for blocked pawns at 5th or 6th rank
+  constexpr Score BlockedPawn[2] = { S(-13, -4), S(-5, 2) };
+
+  constexpr Score BlockedStorm[RANK_NB] = {
+    S(0, 0), S(0, 0), S(76, 78), S(-10, 15), S(-7, 10), S(-4, 6), S(-1, 2)
+  };
 
   // Connected pawn bonus
-  constexpr int Connected[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
+  constexpr int Connected[RANK_NB] = { 0, 5, 7, 11, 24, 48, 86 };
 
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
@@ -347,8 +350,8 @@ namespace {
         // Score this pawn
         if (support | phalanx)
         {
-            int v =  Connected[r] * (4 + 2 * bool(phalanx) - 2 * bool(opposed) - bool(blocked)) / 2
-                   + 21 * popcount(support);
+            int v =  Connected[r] * (2 + bool(phalanx) - bool(opposed))
+                   + 22 * popcount(support);
 
             score += make_score(v, v * (r - 2) / 4);
         }
@@ -375,6 +378,9 @@ namespace {
 #endif
             score -=  Doubled[pos.variant()] * doubled
                     + WeakLever * more_than_one(lever);
+
+        if (blocked && r > RANK_4)
+            score += BlockedPawn[r-4];
     }
 
     return score;
@@ -421,7 +427,7 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) const {
 
   Score bonus = make_score(5, 5);
 
-  File center = Utility::clamp(file_of(ksq), FILE_B, FILE_G);
+  File center = std::clamp(file_of(ksq), FILE_B, FILE_G);
   for (File f = File(center - 1); f <= File(center + 1); ++f)
   {
       b = ourPawns & file_bb(f);
