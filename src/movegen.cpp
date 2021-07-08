@@ -87,7 +87,9 @@ namespace {
         *moveList++ = make<PROMOTION>(to - D, to, ROOK);
         *moveList++ = make<PROMOTION>(to - D, to, BISHOP);
 #ifdef HORDE
-        if (V == HORDE_VARIANT && ksq == SQ_NONE) {} else
+        if (V == HORDE_VARIANT && ksq == SQ_NONE) {
+            *moveList++ = make<PROMOTION>(to - D, to, KNIGHT);
+        } else
 #endif
         if (!(attacks_bb<KNIGHT>(to) & ksq))
         {
